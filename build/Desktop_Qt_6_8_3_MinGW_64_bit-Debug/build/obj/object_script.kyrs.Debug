@@ -1,0 +1,10 @@
+build/obj/main.o
+build/obj/mainwindow.o
+build/obj/aboutdialog.o
+build/obj/buyermodel.o
+build/obj/buyercontroller.o
+build/obj/qrc_resources.o
+build/obj/moc_mainwindow.o
+build/obj/moc_aboutdialog.o
+build/obj/moc_buyermodel.o
+build/obj/moc_buyercontroller.o
