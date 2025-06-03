@@ -11,8 +11,8 @@ AboutDialog::AboutDialog(QWidget *parent)
 
     QLabel *label = new QLabel(
         tr("<b>Housing Buyer Management</b><br><br>"
-           "Institute: BSUIR<br>"
-           "Group: ИЦТМС-XX<br><br>"
+           "Institute: МГСУ<br>"
+           "Group: ИЦТМС-25<br><br>"
            "Name: Иванов Иван Иванович"), this);
 
     layout->addWidget(label);

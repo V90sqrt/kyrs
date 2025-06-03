@@ -18,9 +18,13 @@ HEADERS += \
 FORMS +=
 
 TRANSLATIONS += \
-    translations/ru.ts \
+    be.ts \
+    en.ts \
+    ru.ts \
+    translations/be.ts \
     translations/en.ts \
-    translations/be.ts
+    translations/ru.ts
+
 
 RESOURCES += \
     resources.qrc

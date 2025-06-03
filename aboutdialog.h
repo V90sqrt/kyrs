@@ -3,6 +3,9 @@
 
 #include <QDialog>
 
+/**
+ * @brief Диалоговое окно 'О программе'
+ */
 class AboutDialog : public QDialog {
     Q_OBJECT
 public:

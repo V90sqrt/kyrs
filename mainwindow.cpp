@@ -20,18 +20,25 @@ MainWindow::MainWindow(QWidget *parent)
     controller(new BuyerController(model, this)),
     selectedColumn(0)
 {
+    // Загружаем русский язык по умолчанию
     currentLanguage = "ru";
+
+    // Создаем переводчика и пробуем загрузить перевод
     translator = new QTranslator(this);
 
-    QString translationsPath = QCoreApplication::applicationDirPath() + "/translations/";
-    std::string qmFile = translationsPath.toStdString() + currentLanguage + ".qm";
+    // Сначала получаем абсолютный путь к директории с переводами
+    QString translationsPath = QCoreApplication::applicationDirPath() + QStringLiteral("/translations/");
+    std::string qmFile = translationsPath.QString::toStdString() + currentLanguage + ".qm";
 
+    // Проверяем, что файл существует
     QFile file(QString::fromStdString(qmFile));
     qDebug() << "Translation file exists:" << file.exists() << qmFile.c_str();
 
+    // Загружаем перевод
     bool loaded = translator->load(QString::fromStdString(qmFile));
     qDebug() << "Translator loaded from file:" << loaded << qmFile.c_str();
 
+    // Устанавливаем переводчик для приложения
     if (loaded) {
         qApp->installTranslator(translator);
     }
@@ -109,7 +116,7 @@ void MainWindow::showAboutWindow() {
 }
 
 void MainWindow::importData() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QStringLiteral(""), tr("Text Files (*.txt)"));
     if (!fileName.isEmpty()) {
         if (!BuyerModel::verifyFileFormat(fileName)) {
             QMessageBox::warning(this, tr("Error"), tr("File structure is invalid!"));
@@ -122,7 +129,7 @@ void MainWindow::importData() {
 }
 
 void MainWindow::exportData() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Text Files (*.txt)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), QStringLiteral(""), tr("Text Files (*.txt)"));
     if (!fileName.isEmpty()) {
         if (!controller->exportData(fileName)) {
             QMessageBox::warning(this, tr("Error"), tr("Failed to export file!"));
@@ -148,7 +155,7 @@ void MainWindow::findInCurrentColumn() {
 
     QString text = QInputDialog::getText(this, tr("Search in Column"),
                                          tr("Enter search text for column %1:").arg(controller->getHeaderData(column, Qt::Horizontal).toString()),
-                                         QLineEdit::Normal, "", &ok);
+                                         QLineEdit::Normal, QStringLiteral(""), &ok);
 
     if (ok && !text.isEmpty()) {
         QList<int> results = controller->findInColumn(column, text);
@@ -163,7 +170,7 @@ void MainWindow::findInCurrentColumn() {
 
 void MainWindow::globalSearch() {
     bool ok;
-    QString text = QInputDialog::getText(this, tr("Global Search"), tr("Enter search text:"), QLineEdit::Normal, "", &ok);
+    QString text = QInputDialog::getText(this, tr("Global Search"), tr("Enter search text:"), QLineEdit::Normal, QStringLiteral(""), &ok);
     if (ok && !text.isEmpty()) {
         QPair<int, int> result = controller->findText(text);
         if (result.first >= 0) {
@@ -206,12 +213,10 @@ void MainWindow::displayContextMenu(const QPoint &pos) {
 void MainWindow::changeLanguage() {
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action) return;
-
     std::string lang;
     if (action == russianAction) lang = "ru";
     else if (action == englishAction) lang = "en";
     else if (action == belarusianAction) lang = "be";
-
     if (lang == currentLanguage) return;
 
     qApp->removeTranslator(translator);
@@ -220,8 +225,8 @@ void MainWindow::changeLanguage() {
     delete translator;
     translator = new QTranslator(this);
 
-    QString translationsPath = QCoreApplication::applicationDirPath() + "/translations/";
-    std::string qmFile = translationsPath.toStdString() + currentLanguage + ".qm";
+    QString translationsPath = QCoreApplication::applicationDirPath() + QStringLiteral("/translations/");
+    std::string qmFile = translationsPath.QString::toStdString() + currentLanguage + ".qm";
 
     QFile file(QString::fromStdString(qmFile));
     qDebug() << "Translation file exists:" << file.exists() << qmFile.c_str();
@@ -238,13 +243,13 @@ void MainWindow::changeLanguage() {
 }
 
 void MainWindow::loadApplicationSettings() {
-    QSettings settings("HousingBuyerApp", "MainWindow");
-    restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("windowState").toByteArray());
+    QSettings settings(QStringLiteral("HousingBuyerApp"), QStringLiteral("MainWindow"));
+    restoreGeometry(settings.value(QStringLiteral("geometry")).toByteArray());
+    restoreState(settings.value(QStringLiteral("windowState")).toByteArray());
 
     QHeaderView *header = tableView->horizontalHeader();
     for (int i = 0; i < controller->columnCount(); ++i) {
-        QString key = QString("column_width_%1").arg(i);
+        QString key = QStringLiteral("column_width_") + QString::number(i);
         if (settings.contains(key)) {
             int width = settings.value(key).toInt();
             header->resizeSection(i, width);
@@ -253,13 +258,13 @@ void MainWindow::loadApplicationSettings() {
 }
 
 void MainWindow::saveApplicationSettings() {
-    QSettings settings("HousingBuyerApp", "MainWindow");
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
+    QSettings settings(QStringLiteral("HousingBuyerApp"), QStringLiteral("MainWindow"));
+    settings.setValue(QStringLiteral("geometry"), saveGeometry());
+    settings.setValue(QStringLiteral("windowState"), saveState());
 
     QHeaderView *header = tableView->horizontalHeader();
     for (int i = 0; i < controller->columnCount(); ++i) {
-        QString key = QString("column_width_%1").arg(i);
+        QString key = QStringLiteral("column_width_") + QString::number(i);
         settings.setValue(key, header->sectionSize(i));
     }
 }
